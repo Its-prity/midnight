@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Midnight Privacy-Preserving Counter | Local Dashboard</title>
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&family=Outfit:wght@500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="app-container">
+    <!-- Navbar / Header -->
+    <header class="top-nav">
+      <div class="brand">
+        <div class="logo-icon">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M12 2L2 7L12 12L22 7L12 2Z" stroke="#00f0ff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M2 17L12 22L22 17" stroke="#7000ff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M2 12L12 17L22 12" stroke="#00f0ff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </div>
+        <div class="brand-text">
+          <h1>MIDNIGHT <span>COUNTER</span></h1>
+          <span class="sub-tag">Privacy-Preserving ZK Smart Contract</span>
+        </div>
+      </div>
+
+      <div class="nav-status-group">
+        <div class="status-badge" id="proofServerBadge">
+          <span class="status-dot pulsing"></span>
+          <span class="status-text">Checking Proof Server...</span>
+        </div>
+        <div class="network-badge">
+          <span class="net-icon">🌐</span>
+          <span>Local Node / Compact v0.16.0</span>
+        </div>
+      </div>
+    </header>
+
+    <!-- Main Content Layout -->
+    <main class="main-content">
+      <!-- Top Grid: Counter State & Control Panel -->
+      <section class="dashboard-grid">
+        
+        <!-- Card 1: Public Ledger State -->
+        <div class="card glass-card state-card">
+          <div class="card-header">
+            <div class="header-title">
+              <span class="icon">📊</span>
+              <h2>Public Ledger State</h2>
+            </div>
+            <span class="chip public-chip">ON-CHAIN PUBLIC</span>
+          </div>
+
+          <div class="counter-display-wrapper">
+            <div class="counter-glow-bg"></div>
+            <div class="counter-val-container">
+              <span class="counter-label">Current Ledger Count</span>
+              <div class="counter-number" id="counterValue">0</div>
+            </div>
+          </div>
+
+          <div class="state-metrics">
+            <div class="metric-item">
+              <span class="metric-label">Last Disclosed Input</span>
+              <span class="metric-val" id="lastDisclosedVal">0</span>
+            </div>
+            <div class="metric-divider"></div>
+            <div class="metric-item">
+              <span class="metric-label">Total Transactions</span>
+              <span class="metric-val" id="totalTxVal">0</span>
+            </div>
+            <div class="metric-divider"></div>
+            <div class="metric-item">
+              <span class="metric-label">Ledger Cell Type</span>
+              <span class="metric-val code-text">Cell&lt;Uint&lt;32&gt;&gt;</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Card 2: ZK Witness & Circuit Control Panel -->
+        <div class="card glass-card control-card">
+          <div class="card-header">
+            <div class="header-title">
+              <span class="icon">⚡</span>
+              <h2>Circuit Execution & Witness Input</h2>
+            </div>
+            <span class="chip private-chip">OFF-CHAIN WITNESS</span>
+          </div>
+
+          <div class="control-body">
+            <div class="input-group">
+              <label for="secretInput">
+                <span class="label-title">Private Witness Input (secret_increment)</span>
+                <span class="label-desc">Kept private off-chain; disclosed value updates public counter state</span>
+              </label>
+
+              <div class="input-field-container">
+                <div class="privacy-lock-icon" title="Private witness input">🔒</div>
+                <input type="number" id="secretInput" min="1" value="5" placeholder="Enter positive integer...">
+                <button class="btn btn-primary" id="btnIncrement">
+                  <span class="btn-text">Execute Disclose & Increment</span>
+                  <span class="btn-spinner hidden"></span>
+                </button>
+              </div>
+
+              <div class="constraint-indicator valid" id="constraintBox">
+                <span class="check-icon">✓</span>
+                <span class="constraint-text">Compact Circuit Constraint: <code>assert secret_increment > 0</code></span>
+              </div>
+            </div>
+
+            <!-- Proof Generation Progress Tracker -->
+            <div class="proof-stepper hidden" id="proofStepper">
+              <div class="stepper-title">
+                <span class="spin-icon">⏳</span>
+                <span>Zero-Knowledge Proof Generation Sequence</span>
+              </div>
+              <div class="steps-grid">
+                <div class="step-box active" id="step1">
+                  <span class="step-num">1</span>
+                  <span class="step-desc">Validate Witness Input</span>
+                </div>
+                <div class="step-box" id="step2">
+                  <span class="step-num">2</span>
+                  <span class="step-desc">disclose(secret)</span>
+                </div>
+                <div class="step-box" id="step3">
+                  <span class="step-num">3</span>
+                  <span class="step-desc">Generate ZK Proof</span>
+                </div>
+                <div class="step-box" id="step4">
+                  <span class="step-num">4</span>
+                  <span class="step-desc">Update Ledger</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="action-footer">
+              <button class="btn btn-secondary btn-reset" id="btnReset">
+                <span>🔄 Reset Ledger to 0</span>
+              </button>
+              <button class="btn btn-outline" id="btnRunTests">
+                <span>🧪 Run Unit Tests (counter.test.ts)</span>
+              </button>
+            </div>
+          </div>
+        </div>
+
+      </section>
+
+      <!-- Middle Section: Privacy Model & Compact Code View -->
+      <section class="info-grid">
+        
+        <!-- Privacy Architecture Model -->
+        <div class="card glass-card privacy-model-card">
+          <div class="card-header">
+            <div class="header-title">
+              <span class="icon">🛡️</span>
+              <h2>Midnight Privacy Model Architecture</h2>
+            </div>
+          </div>
+
+          <div class="privacy-split-container">
+            <!-- Private Side -->
+            <div class="realm-box private-realm">
+              <div class="realm-header">
+                <span class="realm-icon">🔐</span>
+                <h3>PRIVATE REALM (Off-Chain)</h3>
+              </div>
+              <ul class="realm-list">
+                <li>
+                  <strong class="tag-title">Witness Input:</strong>
+                  <code>secret_increment</code> provided off-chain by user.
+                </li>
+                <li>
+                  <strong class="tag-title">Zero-Knowledge Circuit:</strong>
+                  Enforces <code>secret_increment &gt; 0</code> inside private witness.
+                </li>
+                <li>
+                  <strong class="tag-title">Secrecy Guarantee:</strong>
+                  User keys, private state, and off-chain execution context remain completely unexposed on the blockchain.
+                </li>
+              </ul>
+            </div>
+
+            <div class="realm-arrow">
+              <div class="arrow-badge">disclose()</div>
+              <div class="arrow-line"></div>
+            </div>
+
+            <!-- Public Side -->
+            <div class="realm-box public-realm">
+              <div class="realm-header">
+                <span class="realm-icon">🌐</span>
+                <h3>PUBLIC REALM (On-Chain)</h3>
+              </div>
+              <ul class="realm-list">
+                <li>
+                  <strong class="tag-title">Public Ledger Cell:</strong>
+                  <code>export ledger counter: Cell&lt;Uint&lt;32&gt;&gt;</code>
+                </li>
+                <li>
+                  <strong class="tag-title">Disclosed Value:</strong>
+                  Only explicit <code>disclose(secret_increment)</code> applies to ledger.
+                </li>
+                <li>
+                  <strong class="tag-title">Verifiable Proof:</strong>
+                  ZK Proof verifies circuit conditions were met without exposing private data.
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <!-- Contract Source View -->
+        <div class="card glass-card code-card">
+          <div class="card-header">
+            <div class="header-title">
+              <span class="icon">📄</span>
+              <h2>contracts/counter.compact</h2>
+            </div>
+            <span class="chip code-chip">COMPACT SOURCE</span>
+          </div>
+
+          <div class="code-container">
+            <pre><code><span class="c-comment">// Midnight Compact Smart Contract — Privacy-Preserving Counter</span>
+<span class="c-keyword">pragma</span> language_version &gt;= <span class="c-string">0.14.0</span>;
+
+<span class="c-keyword">import</span> CompactStandardLibrary;
+
+<span class="c-keyword">export ledger</span> counter: Cell&lt;Uint&lt;<span class="c-number">32</span>&gt;&gt;;
+
+<span class="c-keyword">export circuit</span> <span class="c-func">increment</span>(secret_increment: Uint&lt;<span class="c-number">32</span>&gt;): [] {
+    <span class="c-comment">// Enforce private circuit logic constraint</span>
+    <span class="c-keyword">assert</span> secret_increment &gt; <span class="c-number">0</span> <span class="c-string">"Increment amount must be greater than zero"</span>;
+
+    <span class="c-comment">// Explicitly disclose the private witness input to update public ledger state</span>
+    <span class="c-keyword">const</span> inc = <span class="c-func">disclose</span>(secret_increment);
+    counter.write(counter.read() + inc);
+}
+
+<span class="c-keyword">export circuit</span> <span class="c-func">reset</span>(): [] {
+    counter.write(<span class="c-number">0</span>);
+}</code></pre>
+          </div>
+        </div>
+
+      </section>
+
+      <!-- Terminal Output Modal / Panel for Unit Tests -->
+      <section class="test-terminal-section hidden" id="terminalSection">
+        <div class="card glass-card terminal-card">
+          <div class="card-header">
+            <div class="header-title">
+              <span class="icon">💻</span>
+              <h2>Automated Unit Test Execution Terminal Output</h2>
+            </div>
+            <button class="btn-close" id="btnCloseTerminal">✕ Close</button>
+          </div>
+          <div class="terminal-body">
+            <pre id="terminalOutput">Running test suite...</pre>
+          </div>
+        </div>
+      </section>
+
+      <!-- Transaction & Audit Log Table -->
+      <section class="history-section">
+        <div class="card glass-card history-card">
+          <div class="card-header">
+            <div class="header-title">
+              <span class="icon">📜</span>
+              <h2>On-Chain Transaction & ZK Proof Audit Log</h2>
+            </div>
+            <span class="badge tx-count-badge" id="txCountBadge">0 Transactions Recorded</span>
+          </div>
+
+          <div class="table-responsive">
+            <table class="history-table">
+              <thead>
+                <tr>
+                  <th>Timestamp</th>
+                  <th>Circuit Action</th>
+                  <th>Disclosed Increment</th>
+                  <th>New Counter State</th>
+                  <th>ZK Proof Hash</th>
+                  <th>Status</th>
+                </tr>
+              </thead>
+              <tbody id="historyTableBody">
+                <tr class="empty-row">
+                  <td colspan="6">No transactions recorded yet. Enter a secret increment above and click execute!</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+      <p>Midnight Network Privacy-Preserving Smart Contract Demo | Built with Compact Language & Zero-Knowledge Proofs</p>
+    </footer>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
