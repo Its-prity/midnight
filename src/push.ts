@@ -67,7 +67,7 @@ async function run() {
   const currentBranch = (await git.currentBranch({ fs, dir })) || 'master';
   console.log(`Current branch: ${currentBranch}`);
 
-  const token = process.env.GITHUB_TOKEN || process.env.GH_TOKEN || '';
+  const token = (process.env.GITHUB_TOKEN || process.env.GH_TOKEN || '').trim();
 
   try {
     const pushResult = await git.push({
@@ -76,10 +76,11 @@ async function run() {
       dir,
       remote: 'origin',
       ref: currentBranch,
-      onAuth: () => ({ username: token || 'git', password: token })
+      headers: token ? { Authorization: `Bearer ${token}` } : undefined,
+      onAuth: () => ({ username: token })
     });
     console.log(`✅ Pushed successfully to https://github.com/Its-prity/midnight.git (${currentBranch} branch)!`);
-    console.log(pushResult);
+    console.log(JSON.stringify(pushResult, null, 2));
   } catch (err: any) {
     console.log('\n⚠️ Push authentication status:');
     console.log(err.message);
