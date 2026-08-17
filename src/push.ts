@@ -63,7 +63,10 @@ async function run() {
     console.log('Remote status:', err.message);
   }
 
-  console.log('\n5. Attempting git push to origin main...');
+  console.log('\n5. Attempting git push to origin...');
+  const currentBranch = (await git.currentBranch({ fs, dir })) || 'master';
+  console.log(`Current branch: ${currentBranch}`);
+
   const token = process.env.GITHUB_TOKEN || process.env.GH_TOKEN || '';
 
   try {
@@ -72,14 +75,13 @@ async function run() {
       http,
       dir,
       remote: 'origin',
-      ref: 'main',
-      force: true,
+      ref: currentBranch,
       onAuth: () => ({ username: token || 'git', password: token })
     });
-    console.log('✅ Pushed successfully to https://github.com/Its-prity/midnight.git (main branch)!');
+    console.log(`✅ Pushed successfully to https://github.com/Its-prity/midnight.git (${currentBranch} branch)!`);
     console.log(pushResult);
   } catch (err: any) {
-    console.log('\n⚠️ Push authentication needed:');
+    console.log('\n⚠️ Push authentication status:');
     console.log(err.message);
   }
 }
