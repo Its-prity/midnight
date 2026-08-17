@@ -68,6 +68,7 @@ async function run() {
   console.log(`Current branch: ${currentBranch}`);
 
   const token = (process.env.GITHUB_TOKEN || process.env.GH_TOKEN || '').trim();
+  const basicAuth = Buffer.from(`x-access-token:${token}`).toString('base64');
 
   try {
     const pushResult = await git.push({
@@ -76,8 +77,8 @@ async function run() {
       dir,
       remote: 'origin',
       ref: currentBranch,
-      headers: token ? { Authorization: `Bearer ${token}` } : undefined,
-      onAuth: () => ({ username: token })
+      headers: token ? { Authorization: `Basic ${basicAuth}` } : undefined,
+      onAuth: () => ({ username: 'x-access-token', password: token })
     });
     console.log(`✅ Pushed successfully to https://github.com/Its-prity/midnight.git (${currentBranch} branch)!`);
     console.log(JSON.stringify(pushResult, null, 2));
