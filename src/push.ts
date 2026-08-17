@@ -49,16 +49,19 @@ async function run() {
     console.log('Commit status:', err.message);
   }
 
-  console.log('\n4. Setting remote origin to https://github.com/Its-prity/midnight.git...');
+  const token = (process.env.GITHUB_TOKEN || process.env.GH_TOKEN || '').trim();
+  const remoteUrl = token ? `https://x-access-token:${token}@github.com/Its-prity/midnight.git` : 'https://github.com/Its-prity/midnight.git';
+
+  console.log('\n4. Setting remote origin...');
   try {
     await git.addRemote({
       fs,
       dir,
       remote: 'origin',
-      url: 'https://github.com/Its-prity/midnight.git',
+      url: remoteUrl,
       force: true
     });
-    console.log('✓ Remote origin set to https://github.com/Its-prity/midnight.git.');
+    console.log('✓ Remote origin set.');
   } catch (err: any) {
     console.log('Remote status:', err.message);
   }
@@ -67,16 +70,13 @@ async function run() {
   const currentBranch = (await git.currentBranch({ fs, dir })) || 'master';
   console.log(`Current branch: ${currentBranch}`);
 
-  const token = (process.env.GITHUB_TOKEN || process.env.GH_TOKEN || '').trim();
-
   try {
     const pushResult = await git.push({
       fs,
       http,
       dir,
       remote: 'origin',
-      ref: currentBranch,
-      onAuth: () => ({ username: token, password: '' })
+      ref: currentBranch
     });
     console.log(`✅ Pushed successfully to https://github.com/Its-prity/midnight.git (${currentBranch} branch)!`);
     console.log(JSON.stringify(pushResult, null, 2));
