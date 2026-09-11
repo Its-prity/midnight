@@ -11,21 +11,25 @@
 
 ## 📋 Submission Checklist & Requirements Status
 
-| Level 1 / Level 2 Requirement | Description | Status |
+| Level 1 / Level 2 / Level 3 Requirement | Description | Status |
 |:---|:---|:---:|
 | **Public GitHub Repository** | Public repo with full README, setup instructions, and architecture | ✅ Verified |
 | **Live Demo Link** | Production deployment on Vercel: [prity-midnight-counter.vercel.app](https://prity-midnight-counter.vercel.app) | ✅ Live |
+| **Passing Test Suite** | 3 passing automated unit tests (`npm test`) | ✅ Verified (3/3) |
+| **Screenshot: Test Output** | Verification capture of test run with 3 tests passing | ✅ Included |
+| **CI/CD Pipeline Running** | Automated GitHub Actions workflow (`ci.yml`) with build + test | ✅ Verified |
+| **CI/CD Status Badge** | Active status badge linked to GitHub Actions | ✅ Included |
+| **Demo Video (Full Functionality)** | Video walkthrough of wallet connect + circuit call: [youtu.be/mv2PFNy3NLU](https://youtu.be/mv2PFNy3NLU) | ✅ Available |
 | **Deployed Preprod Contract** | Verified address: `0x4a2e8c1b9f7a3d0e5c8b2a4f6d9e1c3b7a5f8d0e` | ✅ Verified on-chain |
-| **Demo Video Walkthrough** | Video demonstrating Lace connect/disconnect + circuit execution: [youtu.be/mv2PFNy3NLU](https://youtu.be/mv2PFNy3NLU) | ✅ Available |
+| **Observable Privacy Behavior** | "Something proven without being shown": `assert secret_increment > 0` validated in ZK | ✅ Documented & Verified |
+| **Privacy Model Section** | Detailed breakdown of what an observer can and cannot learn | ✅ Included |
+| **Approved Idea / Product Proposal** | Full proposal for Midnight ZKVote from official idea list: [PROPOSAL.md](PROPOSAL.md) | ✅ Included |
+| **Initial Product Idea Paragraph** | Concise 1-paragraph summary directly in README | ✅ Included |
 | **Lace Wallet Connect / Disconnect** | Implemented using official Midnight Lace DApp Connector API | ✅ Implemented |
 | **Circuit Called from Frontend** | Interactive UI calling `increment` & `reset` circuits with local ZK proving | ✅ Implemented |
-| **Observable Privacy Behavior** | "Something proven without being shown": `assert secret_increment > 0` validated in ZK | ✅ Documented & Verified |
 | **Toolchain & Compact Compilation** | Compiles via `compact compile contracts/counter.compact managed` | ✅ Verified |
-| **Passing Test Suite** | 3 passing automated unit tests (`npm test`) | ✅ Verified (3/3) |
 | **Generated `managed/` Directory** | Compiled circuits, TypeScript bindings, and prover/verifier keys | ✅ Present |
-| **Initial Product Idea Paragraph** | Concise 1-paragraph summary in README with [PROPOSAL.md](PROPOSAL.md) | ✅ Included |
-| **Public State vs Private Witness** | In-depth breakdown with dual-state architecture diagram | ✅ Included |
-| **Verification Screenshots** | High-resolution terminal captures of compile and Preprod deployment | ✅ Included |
+| **Screenshots: Compile & Deploy** | High-resolution terminal captures of compile and Preprod deployment | ✅ Included |
 | **Minimum Commits** | 20+ meaningful commits with conventional commit history | ✅ Verified (20+ commits) |
 
 ---
@@ -81,6 +85,11 @@ The Compact smart contract (`contracts/counter.compact`) compiles into zero-know
 Deployment of the compiled Counter contract to the **Midnight Preprod** network displaying transaction finalization and contract address:
 
 ![Contract Deployed](docs/screenshots/contract-deployed.jpg)
+
+### 3. Automated Test Output (3+ Tests Passing)
+Automated contract test suite verifying Compact circuit constraints, state transitions, and witness secrecy:
+
+![Test Output Passing](docs/screenshots/test-output.jpg)
 
 ---
 
