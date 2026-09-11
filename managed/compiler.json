@@ -1,0 +1,13 @@
+{
+  "compiler_version": "0.16.0",
+  "language_version": "0.14.0",
+  "contract_name": "counter",
+  "circuits": [
+    "increment",
+    "reset"
+  ],
+  "witnesses": [],
+  "ledger_state": {
+    "counter": "Cell<Uint<32>>"
+  }
+}
