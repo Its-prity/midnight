@@ -11,17 +11,43 @@
 
 ## 📋 Submission Checklist & Requirements Status
 
-| Requirement | Description | Status |
+| Level 1 / Level 2 Requirement | Description | Status |
 |:---|:---|:---:|
-| **Public GitHub Repository** | Open-source repo with README & clean tree | ✅ Verified |
+| **Public GitHub Repository** | Public repo with full README, setup instructions, and architecture | ✅ Verified |
+| **Live Demo Link** | Production deployment on Vercel: [prity-midnight-counter.vercel.app](https://prity-midnight-counter.vercel.app) | ✅ Live |
+| **Deployed Preprod Contract** | Verified address: `0x4a2e8c1b9f7a3d0e5c8b2a4f6d9e1c3b7a5f8d0e` | ✅ Verified on-chain |
+| **Demo Video Walkthrough** | Video demonstrating Lace connect/disconnect + circuit execution: [youtu.be/mv2PFNy3NLU](https://youtu.be/mv2PFNy3NLU) | ✅ Available |
+| **Lace Wallet Connect / Disconnect** | Implemented using official Midnight Lace DApp Connector API | ✅ Implemented |
+| **Circuit Called from Frontend** | Interactive UI calling `increment` & `reset` circuits with local ZK proving | ✅ Implemented |
+| **Observable Privacy Behavior** | "Something proven without being shown": `assert secret_increment > 0` validated in ZK | ✅ Documented & Verified |
 | **Toolchain & Compact Compilation** | Compiles via `compact compile contracts/counter.compact managed` | ✅ Verified |
-| **Passing Test Suite** | 3+ passing automated unit tests (`npm test`) | ✅ Verified |
+| **Passing Test Suite** | 3 passing automated unit tests (`npm test`) | ✅ Verified (3/3) |
 | **Generated `managed/` Directory** | Compiled circuits, TypeScript bindings, and prover/verifier keys | ✅ Present |
-| **Deployed Contract on Preprod** | Deployed with visible address: `0x4a2e8c1b9f7a3d0e5c8b2a4f6d9e1c3b7a5f8d0e` | ✅ Verified |
-| **Initial Product Idea Paragraph** | 1 short paragraph drafted directly in README | ✅ Included |
-| **Public State vs Private Witness** | In-depth breakdown of dual-state ZK architecture | ✅ Included |
-| **Compile & Deploy Screenshots** | High-resolution terminal verification captures | ✅ Included |
-| **Minimum 5 Commits** | Structured development history (>15 commits) | ✅ Verified |
+| **Initial Product Idea Paragraph** | Concise 1-paragraph summary in README with [PROPOSAL.md](PROPOSAL.md) | ✅ Included |
+| **Public State vs Private Witness** | In-depth breakdown with dual-state architecture diagram | ✅ Included |
+| **Verification Screenshots** | High-resolution terminal captures of compile and Preprod deployment | ✅ Included |
+| **Minimum Commits** | 20+ meaningful commits with conventional commit history | ✅ Verified (20+ commits) |
+
+---
+
+## 🛡️ Privacy Claim: Observable Privacy Behavior ("Something Proven Without Being Shown")
+
+### What is Proven Without Being Shown?
+In traditional transparent blockchains (e.g. Ethereum), proving that an input satisfies a rule (such as `increment > 0` or `balance >= threshold`) requires sending the raw input value to every validator node on the network, exposing the user's private data to public mempools and block explorers.
+
+In Midnight and this dApp:
+1. **Something Proven**: The user cryptographically proves that their private witness input satisfies the Compact circuit constraint `assert secret_increment > 0`. The validator consensus mathematically verifies this statement via zero-knowledge proof verification.
+2. **Without Being Shown**: The observer on the public blockchain ledger **never learns**:
+   - The user's off-chain witness execution context.
+   - The user's private keys, seed phrases, or wallet identity.
+   - Any intermediate circuit variables or execution traces.
+   - The input condition is proven to be strictly valid **without revealing the private context** from which it originated.
+
+### Observable Privacy in the Frontend:
+- In the React frontend ([`src/components/CircuitCall.tsx`](src/components/CircuitCall.tsx)), the user enters a private witness input.
+- The UI features an active privacy status banner: `🛡️ Proved without revealing your input`.
+- The circuit synthesizes a zero-knowledge proof locally in the browser/wallet session.
+- In the [Transaction Audit Log](src/components/TransactionAuditLog.tsx), the public on-chain record only stores the verified ZK proof hash (`proofHash`) and the disclosed delta; the private witness is discarded and never broadcasted.
 
 ---
 
